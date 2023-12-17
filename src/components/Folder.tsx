@@ -28,7 +28,7 @@ const Folder = ({ explorer, handleInsertNode }: TParams) => {
   };
 
   const onAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === "Enter" && !!name) {
+    if (e.key === "Enter" && name.length) {
       handleInsertNode(explorer.id, name, showInput.isFolder);
       setName("");
       setShowInput(initialShowInput);
