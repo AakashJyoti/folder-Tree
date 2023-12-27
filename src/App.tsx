@@ -5,7 +5,7 @@ import useTraverseTree from "./hooks/useTraverseTree";
 
 function App() {
   const [explorerData, setExplorerData] = useState<TFolder>(explorer);
-  const [reRender, setReRender] = useState(false);
+  const [, setReRender] = useState(false);
 
   const { insetNode, deleteNode, updateNode } = useTraverseTree();
 
