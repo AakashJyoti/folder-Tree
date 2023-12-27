@@ -3,6 +3,8 @@ import { useState } from "react";
 type TParams = {
   explorer: TFolder;
   handleInsertNode: (folderId: string, item: string, isFolder: boolean) => void;
+  handleDeleteNode: (folderId: string) => void;
+  handleUpdateNode: (folderId: string, item: string) => void;
 };
 
 const initialShowInput = {
@@ -10,7 +12,12 @@ const initialShowInput = {
   isFolder: false,
 };
 
-const Folder = ({ explorer, handleInsertNode }: TParams) => {
+const Folder = ({
+  explorer,
+  handleInsertNode,
+  handleDeleteNode,
+  handleUpdateNode,
+}: TParams) => {
   const [expandItems, setExpandItems] = useState(false);
   const [showInput, setShowInput] = useState(initialShowInput);
   const [name, setName] = useState("");
@@ -35,34 +42,51 @@ const Folder = ({ explorer, handleInsertNode }: TParams) => {
     }
   };
 
+  const onDeleteFolder = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    handleDeleteNode(explorer.id);
+  };
+
   return (
     <div className="pl-4">
       <div
-        className={`my-1 p-3 py-1 ${
+        className={`my-1 p-3 py-1 cursor-pointer rounded flex gap-20 w-fit justify-between ${
           explorer.isFolder ? "bg-gray-300" : "bg-gray-200"
-        } cursor-pointer rounded flex gap-20 w-fit justify-between`}
+        }`}
         onClick={() => setExpandItems((prev) => !prev)}
       >
         <p>
           {explorer.isFolder ? (expandItems ? "📂" : "📁") : "📃"}{" "}
           {explorer.name}
         </p>
-        {explorer.isFolder && (
-          <div className="flex gap-2">
+        <div className="flex gap-4">
+          {explorer.isFolder && (
+            <div className="flex gap-2">
+              <button
+                className="bg-white px-1 rounded"
+                onClick={(e) => handleCreate(e, true)}
+              >
+                ➕📁
+              </button>
+              <button
+                className="bg-white px-1 rounded"
+                onClick={(e) => handleCreate(e, false)}
+              >
+                ➕📃
+              </button>
+            </div>
+          )}
+          {explorer.id === "1" ? null : (
             <button
               className="bg-white px-1 rounded"
-              onClick={(e) => handleCreate(e, true)}
+              onClick={(e) => onDeleteFolder(e)}
             >
-              ➕📁
+              🗑️
             </button>
-            <button
-              className="bg-white px-1 rounded"
-              onClick={(e) => handleCreate(e, false)}
-            >
-              ➕📃
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {showInput.visible && (
@@ -88,6 +112,8 @@ const Folder = ({ explorer, handleInsertNode }: TParams) => {
               key={item.id}
               explorer={item}
               handleInsertNode={handleInsertNode}
+              handleUpdateNode={handleUpdateNode}
+              handleDeleteNode={handleDeleteNode}
             />
           ))}
         </div>

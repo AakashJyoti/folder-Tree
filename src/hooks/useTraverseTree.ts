@@ -25,7 +25,37 @@ const useTraverseTree = () => {
     return { ...tree, items: latestNode };
   }
 
-  return { insetNode };
+  function deleteNode(tree: TFolder, folderId: string) {
+    if (tree.id === folderId) {
+      return null;
+    }
+
+    if (tree.items && tree.items.length > 0) {
+      tree.items = tree.items.filter((item) => item.id !== folderId);
+      tree.items.forEach((item) => {
+        deleteNode(item, folderId);
+      });
+    }
+
+    return tree;
+  }
+
+  function updateNode(tree: TFolder, folderId: string, item: string) {
+    if (tree.id === folderId) {
+      tree.name = item;
+    }
+
+    if (tree.items && tree.items.length > 0) {
+      tree.items = tree.items.filter((item) => item.id !== folderId);
+      tree.items.forEach((node) => {
+        updateNode(node, folderId, item);
+      });
+    }
+
+    return tree;
+  }
+
+  return { insetNode, deleteNode, updateNode };
 };
 
 export default useTraverseTree;
