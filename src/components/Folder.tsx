@@ -20,6 +20,7 @@ const Folder = ({
 }: TParams) => {
   const [expandItems, setExpandItems] = useState(false);
   const [showInput, setShowInput] = useState(initialShowInput);
+  const [selectedId, setSelectedId] = useState("");
   const [name, setName] = useState("");
 
   const handleCreate = (
@@ -34,11 +35,20 @@ const Folder = ({
     });
   };
 
-  const onAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onAddFolder = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    selectedId: string
+  ) => {
     if (e.key === "Enter" && name.length) {
-      handleInsertNode(explorer.id, name, showInput.isFolder);
-      setName("");
-      setShowInput(initialShowInput);
+      if (selectedId) {
+        handleUpdateNode(selectedId, name);
+        setName("");
+        setShowInput(initialShowInput);
+      } else {
+        handleInsertNode(explorer.id, name, showInput.isFolder);
+        setName("");
+        setShowInput(initialShowInput);
+      }
     }
   };
 
@@ -49,10 +59,23 @@ const Folder = ({
     handleDeleteNode(explorer.id);
   };
 
+  const onUpdate = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    element: TFolder
+  ) => {
+    e.stopPropagation();
+    setShowInput({
+      visible: true,
+      isFolder: element.isFolder,
+    });
+    setName(element.name);
+    setSelectedId(element.id);
+  };
+
   return (
     <div className="pl-4">
       <div
-        className={`my-1 p-3 py-1 cursor-pointer rounded flex gap-20 w-fit justify-between ${
+        className={`my-1 p-3 py-1 cursor-pointer rounded flex gap-5 lg:gap-20 w-fit justify-between ${
           explorer.isFolder ? "bg-gray-300" : "bg-gray-200"
         }`}
         onClick={() => setExpandItems((prev) => !prev)}
@@ -61,7 +84,7 @@ const Folder = ({
           {explorer.isFolder ? (expandItems ? "📂" : "📁") : "📃"}{" "}
           {explorer.name}
         </p>
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           {explorer.isFolder && (
             <div className="flex gap-2">
               <button
@@ -86,6 +109,14 @@ const Folder = ({
               🗑️
             </button>
           )}
+          {explorer.id === "1" ? null : (
+            <button
+              className="bg-white px-1 rounded"
+              onClick={(e) => onUpdate(e, explorer)}
+            >
+              ✏️
+            </button>
+          )}
         </div>
       </div>
 
@@ -98,7 +129,7 @@ const Folder = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={() => setShowInput(initialShowInput)}
-            onKeyDown={(e) => onAddFolder(e)}
+            onKeyDown={(e) => onAddFolder(e, selectedId)}
             maxLength={20}
             className="border-2 border-gray-500 rounded px-2 py-[2px] focus:outline-none"
           />

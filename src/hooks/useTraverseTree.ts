@@ -46,7 +46,6 @@ const useTraverseTree = () => {
     }
 
     if (tree.items && tree.items.length > 0) {
-      tree.items = tree.items.filter((item) => item.id !== folderId);
       tree.items.forEach((node) => {
         updateNode(node, folderId, item);
       });

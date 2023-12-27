@@ -37,7 +37,7 @@ function App() {
   };
 
   return (
-    <div className="p-10">
+    <div className="p-5 lg:p-10">
       <Folder
         explorer={explorerData}
         handleInsertNode={handleInsertNode}
